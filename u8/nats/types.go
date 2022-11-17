@@ -9,6 +9,7 @@ var OrderOpenLong string = "Order.Open.Long"
 var OrderCloseLong string = "Order.Close.Long"
 var OrderOpenShort string = "Order.Open.Short"
 var OrderCloseShort string = "Order.Close.Short"
+var MessageShow string = "Message.Debug"
 
 type OrderPayload struct {
 	Symbol   string           `json:"symbol" db:"symbol"`

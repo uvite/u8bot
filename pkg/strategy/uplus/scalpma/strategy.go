@@ -612,7 +612,12 @@ func (s *Strategy) checkPrice() {
 	}
 	bbgo.Notify("long sma:%4.f,bott2:%.4f,limit:%.4f,stop:%.4f,atr:%.4f,atrx:%.4f", s.jma.Last(), bott2, tpLong, stopLong, s.atr.Last(), atr)
 	bbgo.Notify("short sma:%4.f,top2:%.4f,limit:%.4f,stop:%.4f,atr:%.4f,,atrx:%.4f", s.jma.Last(), top2, tpShort, stopShort, s.atr.Last(), atr)
+	payload := map[string]string{
+		"long":  fmt.Sprint("long sma:%4.f,bott2:%.4f,limit:%.4f,stop:%.4f,atr:%.4f,atrx:%.4f", s.jma.Last(), bott2, tpLong, stopLong, s.atr.Last(), atr),
+		"short": fmt.Sprint("short sma:%4.f,top2:%.4f,limit:%.4f,stop:%.4f,atr:%.4f,,atrx:%.4f", s.jma.Last(), top2, tpShort, stopShort, s.atr.Last(), atr),
+	}
 
+	s.Pubsub.Publish(internal.MessageShow, payload)
 }
 
 func (s *Strategy) klineHandler(ctx context.Context, kline types.KLine) {
