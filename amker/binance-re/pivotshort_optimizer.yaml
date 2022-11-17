@@ -1,0 +1,17 @@
+# usage:
+#
+#   go run ./cmd/bbgo optimize --config config/pivotshort.yaml  --optimizer-config config/pivotshort_optimizer.yaml --debug
+#
+---
+executor:
+  type: local
+  local:
+    maxNumberOfProcesses: 10
+
+matrix:
+
+- type: iterate
+  label: interval
+  path: '/exchangeStrategies/0/pivotshort/interval'
+  values: [ "1m", "5m", "30m" ]
+

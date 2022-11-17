@@ -1,0 +1,127 @@
+---
+persistence:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    db: 0
+
+sessions:
+  binance:
+    exchange: binance
+    #futures: true
+    margin: true
+    envVarPrefix: binance
+    heikinAshi: false
+
+    makerFeeRate: 0.0002
+    takerFeeRate: 0.0007
+    modifyOrderAmountForFee: false
+
+exchangeStrategies:
+
+- on: binance
+  genvdmi:
+    canvasPath: "./output.png"
+    symbol: BTCUSDT
+
+    interval: 5m
+    window: 6
+    stoploss: 0.23%
+    source: close
+
+
+    windowATR: 20
+    windowATR2: 20
+    windowHMA: 10
+    windowCCI: 14
+    windowALMA: 130
+    windowMACD: 5
+    windowRSI: 14
+    windowSTOCH: 8
+    windowDMI: 14
+
+    windowQuick: 9
+    windowSlow: 360
+    windowSt: 20
+
+
+    maType: "dema"
+
+
+    # ratio is how much the price breaks the previous low to trigger the short.
+    ratio: 0%
+
+    # quantity is used for submitting the sell order
+    # if quantity is not set, all base balance will be used for selling the short.
+   # quantity: 0.1
+
+    # ATR Multiplier for calculating super trend prices, the higher, the stronger the trends are
+    supertrendMultiplier: 2
+
+    # leverage uses the account net value to calculate the order qty
+    leverage: 1.0
+    # quantity sets the fixed order qty, takes precedence over Leverage
+    #quantity: 0.5
+
+    # marketOrder submits the market sell order when the closed price is lower than the previous pivot low.
+    # by default we will use market order
+    marketOrder: true
+
+    # limitOrder place limit order to open the short position instead of using market order
+    # this is useful when your quantity or leverage is quiet large.
+    limitOrder: false
+
+    
+    predictOffset: 2
+    noTrailingStopLoss: false
+    trailingStopLossType: kline
+    # stddev on high/low-source
+    hlVarianceMultiplier: 0.03
+    hlRangeWindow: 4
+    smootherWindow: 3
+    fisherTransformWindow: 117
+    window1m: 42
+    smootherWindow1m: 118
+    fisherTransformWindow1m: 319
+    atrWindow: 14
+    # orders not been traded will be canceled after `pendingMinutes` minutes
+    pendingMinutes: 3
+    noRebalance: true
+    trendWindow: 12
+    rebalanceFilter: 2
+
+    trailingActivationRatio: [0.0015, 0.002, 0.004, 0.01]
+    trailingCallbackRate: [0.0001, 0.00012, 0.001, 0.002]
+    #driftFilterPos: 0.4
+    #driftFilterNeg: -0.42
+    #ddriftFilterPos: 0
+    #ddriftFilterNeg: 0
+
+    generateGraph: true
+    graphPNLDeductFee: true
+    graphPNLPath: "./pnl.png"
+    graphCumPNLPath: "./cumpnl.png"
+
+
+sync:
+  userDataStream:
+    trades: true
+    filledOrders: true
+  sessions:
+    - binance
+  symbols:
+    - BTCUSDT
+
+backtest:
+  startTime: "2022-01-01"
+  endTime: "2022-09-30"
+  symbols:
+    - BTCUSDT
+  sessions: [binance]
+  accounts:
+    binance:
+      makerFeeRate: 0.0000
+      takerFeeRate: 0.0000
+      balances:
+        BTC: 0
+        USDT: 10000.0

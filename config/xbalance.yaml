@@ -1,0 +1,39 @@
+---
+notifications:
+  slack:
+    defaultChannel: "dev-bbgo"
+    errorChannel: "bbgo-error"
+
+  switches:
+    trade: true
+    orderUpdate: true
+    submitOrder: true
+
+sessions:
+  max:
+    exchange: max
+    envVarPrefix: max
+
+  binance:
+    exchange: binance
+    envVarPrefix: binance
+
+#persistence:
+#  json:
+#    directory: var/data
+#  redis:
+#    host: 127.0.0.1
+#    port: 6379
+#    db: 0
+
+crossExchangeStrategies:
+
+- xbalance:
+    interval: 1h
+    asset: USDT
+    addresses:
+      binance: your_whitelisted_address
+      max: your_whitelisted_address
+    low: 5000
+    middle: 6000
+

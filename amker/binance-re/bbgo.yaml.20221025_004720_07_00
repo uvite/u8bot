@@ -1,0 +1,58 @@
+build:
+  buildDir: build
+  targets:
+    - arch: amd64
+      name: bbgow-amd64-darwin
+      os: darwin
+    - arch: amd64
+      name: bbgow-amd64-linux
+      os: linux
+exchangeStrategies:
+  - grid:
+      ProfitStats: null
+      State: null
+      amount: 100
+      catchUp: false
+      gridNumber: 20
+      lowerPrice: 10000
+      profitSpread: 100
+      side: ""
+      symbol: ANTUSDT
+      upperPrice: 30000
+    "on":
+      - binance
+sessions:
+  binance:
+    envVarPrefix: BINANCE
+    exchange: binance
+    makerFeeRate: 0.00075
+    margin: true
+    modifyOrderAmountForFee: false
+    name: binance
+    orderExecutor: {}
+    takerFeeRate: 0.00075
+  max:
+    envVarPrefix: MAX
+    exchange: max
+    makerFeeRate: 0.00045
+    modifyOrderAmountForFee: false
+    name: max
+    orderExecutor: {}
+    takerFeeRate: 0.0015
+sync:
+  depositHistory: true
+  marginAssets: null
+  marginHistory: false
+  rewardHistory: true
+  sessions:
+    - binance
+  since: "2022-01-01T00:00:00Z"
+  symbols:
+    - session: ""
+      symbol: BTCUSDT
+    - session: ""
+      symbol: ETHUSDT
+  userDataStream:
+    filledOrders: true
+    trades: true
+  withdrawHistory: true

@@ -1,0 +1,47 @@
+persistence:
+json:
+  directory: var/data
+redis:
+  host: 127.0.0.1
+  port: 6379
+  db: 0
+
+sessions:
+  okex:
+    exchange: okex
+    futures: true
+    envVarPrefix: okex
+    makerFeeRate: 0.0002
+    takerFeeRate: 0.0007
+    modifyOrderAmountForFee: false
+
+exchangeStrategies:
+  - on: okex
+    dmima:
+      symbol: ETHUSDTSWAP
+      interval: 1h
+      windowDMI: 20
+      windowATR: 20
+      windowHMA: 19
+      window: 20
+      smoothing: 9
+      power: 1
+      phase: 100
+      quantity: 1
+      # Draw pnl
+      drawGraph: true
+      graphPNLPath: "./pnl.png"
+      graphCumPNLPath: "./cumpnl.png"
+
+backtest:
+  sessions:
+    - okex
+  startTime: "2022-10-01"
+  endTime: "2022-10-30"
+  symbols:
+    - ETHUSDT
+  accounts:
+    binance:
+      balances:
+        ETH: 1
+        USDT: 40_000.0

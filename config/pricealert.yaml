@@ -1,0 +1,22 @@
+---
+notifications:
+  slack:
+    defaultChannel: "dev-bbgo"
+    errorChannel: "bbgo-error"
+
+  switches:
+    trade: true
+    orderUpdate: true
+    submitOrder: true
+
+sessions:
+  binance:
+    exchange: binance
+    envVarPrefix: binance
+
+exchangeStrategies:
+- on: binance
+  pricealert:
+    symbol: "BTCUSDT"
+    interval: "1m"
+    minChange: 0.01

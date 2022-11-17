@@ -1,0 +1,50 @@
+persistence:
+  json:
+    directory: var/data
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    db: 0
+
+sessions:
+  binance:
+    exchange: okex
+    envVarPrefix: okex
+    futures: true
+
+exchangeStrategies:
+- on: okex
+  trendtrader:
+    symbol: BTCUSDT
+    trendLine:
+      interval: 5m
+      pivotRightWindow: 40
+      quantity: 1
+    exits:
+      - trailingStop:
+          callbackRate: 1%
+          activationRatio: 1%
+          closePosition: 100%
+          minProfit: 15%
+          interval: 1m
+          side: buy
+      - trailingStop:
+          callbackRate: 1%
+          activationRatio: 1%
+          closePosition: 100%
+          minProfit: 15%
+          interval: 1m
+          side: sell
+
+backtest:
+  sessions:
+    - binance
+  startTime: "2022-09-21"
+  endTime: "2022-09-30"
+  symbols:
+    - BTCBUSD
+  accounts:
+    binance:
+      balances:
+        BTC: 1
+        BUSD: 50_000.0

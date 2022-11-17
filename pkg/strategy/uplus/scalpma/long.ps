@@ -1,0 +1,129 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © MA_Seifi
+
+//@version=5
+//strategy('Super Scalp 007', overlay=false, initial_capital=200, default_qty_value=100, default_qty_type=strategy.percent_of_equity)
+strategy('Strategy Backtesting Template [MYN]', max_bars_back=5000, overlay=true, pyramiding=0, initial_capital=1000, currency='USD', default_qty_type=strategy.percent_of_equity, default_qty_value=100.0, commission_value=0.036)
+
+// Indicator
+
+len = input.int(14, minval=1, title="Length")
+
+
+// Jurik Moving Average of @everget
+jma(src, length, power, phase) =>
+    phaseRatio = phase < -100 ? 0.5 : phase > 100 ? 2.5 : phase / 100 + 1.5
+    beta = 0.45 * (length - 1) / (0.45 * (length - 1) + 2)
+    alpha = math.pow(beta, power)
+    jma = 0.0
+    e0 = 0.0
+    e0 := (1 - alpha) * src + alpha * nz(e0[1])
+    e1 = 0.0
+    e1 := (src - e0) * (1 - beta) + beta * nz(e1[1])
+    e2 = 0.0
+    e2 := (e0 + phaseRatio * e1 - nz(jma[1])) * math.pow(1 - alpha, 2) + math.pow(alpha, 2) * nz(e2[1])
+    jma := e2 + nz(jma[1])
+    jma
+rsx(src, len)=>
+    src_out = 100 * src
+    mom0 = ta.change(src_out)
+    moa0 = math.abs(mom0)
+    Kg = 3 / (len + 2)
+    Hg = 1 - Kg
+
+    //mom
+    f28 = 0.0, f30 = 0.0
+    f28 := Kg * mom0 + Hg * nz(f28[1])
+    f30 := Hg * nz(f30[1]) + Kg * f28
+    mom1 = f28 * 1.5 - f30 * 0.5
+
+    f38 = 0.0, f40 = 0.0
+    f38 := Hg * nz(f38[1]) + Kg * mom1
+    f40 := Kg * f38 + Hg * nz(f40[1])
+    mom2 = f38 * 1.5 - f40 * 0.5
+
+    f48 = 0.0, f50 = 0.0
+    f48 := Hg * nz(f48[1]) + Kg * mom2
+    f50 := Kg * f48 + Hg * nz(f50[1])
+    mom_out = f48 * 1.5 - f50 * 0.5
+
+    //moa
+    f58 = 0.0, f60 = 0.0
+    f58 := Hg * nz(f58[1]) + Kg * moa0
+    f60 := Kg * f58 + Hg * nz(f60[1])
+    moa1 = f58 * 1.5 - f60 * 0.5
+
+    f68 = 0.0, f70 = 0.0
+    f68 := Hg * nz(f68[1]) + Kg * moa1
+    f70 := Kg * f68 + Hg * nz(f70[1])
+    moa2 = f68 * 1.5 - f70 * 0.5
+
+    f78 = 0.0, f80 = 0.0
+    f78 := Hg * nz(f78[1]) + Kg * moa2
+    f80 := Kg * f78 + Hg * nz(f80[1])
+    moa_out = f78 * 1.5 - f80 * 0.5
+
+    asdf = math.max(math.min((mom_out / moa_out + 1.0) * 50.0, 100.00), 0.00)
+    asdf
+
+p = close
+
+sma=jma(p,len,1,-100)
+rsi=rsx(p,len)
+//sma = ta.sma(p, len)
+//sma=ta.hma(p,len)
+//abc = ta.sma(p, len)
+
+avg = ta.atr(len)
+fibratio1 = input(defval=1.618, title='Fibonacci Ratio 1')
+fibratio2 = input(defval=2.618, title='Fibonacci Ratio 2')
+fibratio3 = input(defval=4.236, title='Fibonacci Ratio 3')
+r1 = avg * fibratio1
+r2 = avg * fibratio2
+r3 = avg * fibratio3
+top3 = sma + r3
+top2 = sma + r2
+top1 = sma + r1
+bott1 = sma - r1
+bott2 = sma - r2
+bott3 = sma - r3
+
+// t3=plot(top3,transp=0,title="Upper 3",color=color.green)
+// t2=plot(top2,transp=20,title="Upper 2",color=color.red)
+// t1=plot(top1,transp=40,title="Upper 1",color=color.yellow)
+b1=plot(bott1,transp=40,title="Lower 1",color=color.green)
+b2=plot(bott2,transp=20,title="Lower 2",color=color.blue)
+b3=plot(bott3,transp=0,title="Lower 3",color=color.orange)
+plot(sma,title="SMA",color=color.white )
+//fill(t3,b3,color=color.navy,transp=85)
+//plot(rsi,title="rsx",color=color.gray )
+[h, l, c] = request.security(syminfo.tickerid, "60", [high, low, close])//, gaps=barmerge.gaps_on, lookahead=barmerge.lookahead_on)
+
+one=ta.hma(c,8)
+plot(one,title="rsx",color=color.yellow )
+
+// Conditions
+k = 0.003
+longCondition = ta.cross(low, bott2)   and close>one
+shortCondition = ta.cross(high, top2)
+limit_l = top2 * (1 - k)
+stop_l = bott3 * (1 - k * 0.5)
+
+limit_s = bott2*(1+k)
+stop_s = top3 * (1 + k*0.5)
+
+closeStatus = strategy.openprofit > 0 ? 'win' : 'lose'
+
+// plot(limit_l, color=color.new(color.green, 0))
+// plot(stop_l, color=color.new(color.red, 0))
+strategy.entry('long', strategy.long, when=longCondition,comment = "多")
+strategy.exit('long', limit=limit_l, stop=stop_l,comment = closeStatus)
+
+
+// strategy.entry("short", strategy.short, when = shortCondition,comment = "空")
+// strategy.exit('short', limit = limit_s, stop=stop_s,comment = closeStatus)
+
+// shortCondition = ta.crossunder(ta.sma(close, 14), ta.sma(close, 28))
+// if (shortCondition)
+//     strategy.entry("My Short Entry Id", strategy.short)
+
