@@ -82,7 +82,6 @@ func (c *RestClient) NewRequest(ctx context.Context, method, refURL string, para
 
 	pathURL := c.BaseURL.ResolveReference(rel)
 
-	fmt.Println(pathURL, 3333333)
 	return http.NewRequestWithContext(ctx, method, pathURL.String(), bytes.NewReader(body))
 }
 

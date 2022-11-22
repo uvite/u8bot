@@ -2,6 +2,9 @@ package cmd
 
 import (
 	"context"
+	"fmt"
+	"github.com/spf13/afero"
+	"github.com/uvite/u8/loader"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -157,6 +160,20 @@ func runConfig(basectx context.Context, cmd *cobra.Command, userConfig *bbgo.Con
 			environ.BindSync(userConfig.Sync)
 		}
 	}
+	jsFile, err := cmd.Flags().GetString("js")
+	if err != nil {
+		return err
+	}
+	logger := log.New()
+
+	//data := []byte(`test contents`)
+	fs := afero.NewOsFs()
+	pwd, err := os.Getwd()
+	//fmt.Println(pwd)
+	sourceData, err := loader.ReadSource(logger, jsFile, pwd, map[string]afero.Fs{"file": fs}, nil)
+	///fmt.Println(sourceData.Data, err)
+
+	userConfig.Code = sourceData.Data
 
 	trader := bbgo.NewTrader(environ)
 	if err := trader.Configure(userConfig); err != nil {
@@ -271,7 +288,6 @@ func run(cmd *cobra.Command, args []string) error {
 
 		return runConfig(ctx, cmd, userConfig)
 	}
-
 	return runWrapperBinary(ctx, cmd, userConfig, args)
 }
 
@@ -304,6 +320,7 @@ func runWrapperBinary(ctx context.Context, cmd *cobra.Command, userConfig *bbgo.
 // buildAndRun builds the package natively and run the binary with the given args
 func buildAndRun(ctx context.Context, userConfig *bbgo.Config, args ...string) (*exec.Cmd, error) {
 	packageDir, err := ioutil.TempDir("build", "bbgow")
+	fmt.Println(packageDir)
 	if err != nil {
 		return nil, err
 	}

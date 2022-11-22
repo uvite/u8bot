@@ -2,12 +2,13 @@ package types
 
 import (
 	"fmt"
+	"gonum.org/v1/gonum/stat"
 	"math"
 	"reflect"
 	"time"
 
 	"github.com/wcharczuk/go-chart/v2"
-	"gonum.org/v1/gonum/stat"
+	//"gonum.org/v1/gonum/stat"
 
 	"github.com/c9s/bbgo/pkg/datatype/floats"
 )

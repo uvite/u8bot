@@ -21,7 +21,9 @@ import (
 
 // DefaultFeeRate set the fee rate for most cases
 // BINANCE uses 0.1% for both maker and taker
-//  for BNB holders, it's 0.075% for both maker and taker
+//
+//	for BNB holders, it's 0.075% for both maker and taker
+//
 // MAX uses 0.050% for maker and 0.15% for taker
 var DefaultFeeRate = fixedpoint.NewFromFloat(0.075 * 0.01)
 
@@ -330,6 +332,7 @@ type Config struct {
 	CrossExchangeStrategies []CrossExchangeStrategy `json:"-" yaml:"-"`
 
 	PnLReporters []PnLReporterConfig `json:"reportPnL,omitempty" yaml:"reportPnL,omitempty"`
+	Code         []byte              `json:"-" yaml:"-"`
 }
 
 func (c *Config) Map() (map[string]interface{}, error) {

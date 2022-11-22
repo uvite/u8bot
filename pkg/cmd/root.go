@@ -148,6 +148,7 @@ func init() {
 	RootCmd.PersistentFlags().String("dotenv", ".env.local", "the dotenv file you want to load")
 
 	RootCmd.PersistentFlags().String("config", "bbgo.yaml", "config file")
+	RootCmd.PersistentFlags().String("js", "bbgo.js", "config file")
 
 	// A flag can be 'persistent' meaning that this flag will be available to
 	// the command it's assigned to as well as every command under that command.
@@ -210,6 +211,8 @@ func Execute() {
 			// rotatelogs.WithMaxAge(24 * time.Hour),
 			rotatelogs.WithRotationTime(time.Duration(24)*time.Hour),
 		)
+		//fmt.Println("access_log.%Y%m%d")
+
 		if err != nil {
 			log.Panic(err)
 		}

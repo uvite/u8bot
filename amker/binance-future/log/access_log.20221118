@@ -1,0 +1,24 @@
+{"level":"info","msg":"otp key loaded: SQKCT**********************LJQIZ","time":"2022-11-18T00:09:05+08:00"}
+{"level":"info","msg":"binance account","session":"binance","time":"2022-11-18T00:09:05+08:00"}
+{"level":"info","msg":" USDT: 431.39610285 (locked 185.59130255)","time":"2022-11-18T00:09:05+08:00"}
+{"level":"info","msg":"attaching strategy *scalpma.Strategy on binance...","time":"2022-11-18T00:09:05+08:00"}
+{"level":"info","msg":"loading strategies states...","time":"2022-11-18T00:09:05+08:00"}
+{"level":"info","msg":"found symbol BTCUSDT based strategy from scalpma.Strategy","time":"2022-11-18T00:09:05+08:00"}
+{"level":"info","msg":"symbol BTCUSDT: 0 trades loaded","time":"2022-11-18T00:09:05+08:00"}
+{"exchange":"binance","level":"info","msg":"querying kline BTCUSDT 1m {1000 \u003cnil\u003e 2022-11-18 00:09:05.275584 +0800 CST m=+0.034481292}","time":"2022-11-18T00:09:05+08:00"}
+{"exchange":"binance","level":"info","msg":"querying kline BTCUSDT 5m {1000 \u003cnil\u003e 2022-11-18 00:09:05.275584 +0800 CST m=+0.034481292}","time":"2022-11-18T00:09:06+08:00"}
+{"level":"info","msg":"BTCUSDT last price: 16575.2","time":"2022-11-18T00:09:06+08:00"}
+{"level":"warning","msg":"messenger is not set, skip initializing","time":"2022-11-18T00:09:07+08:00"}
+{"level":"info","msg":"subscribing BTCUSDT kline 1m","session":"binance","time":"2022-11-18T00:09:07+08:00"}
+{"level":"info","msg":"subscribing BTCUSDT kline 5m","session":"binance","time":"2022-11-18T00:09:07+08:00"}
+{"level":"info","msg":"subscribing BTCUSDT bookticker ","session":"binance","time":"2022-11-18T00:09:07+08:00"}
+{"level":"info","msg":"connecting binance market data stream...","session":"binance","time":"2022-11-18T00:09:07+08:00"}
+{"level":"info","msg":"[websocket] connected, public = true, read timeout = 2m0s","time":"2022-11-18T00:09:08+08:00"}
+{"exchange":"binance","level":"info","msg":"subscribing channels: [btcusdt@kline_1m btcusdt@kline_5m btcusdt@bookTicker]","time":"2022-11-18T00:09:08+08:00"}
+{"level":"info","msg":"connecting binance user data stream...","session":"binance","time":"2022-11-18T00:09:08+08:00"}
+{"level":"info","msg":"[websocket] connected, public = false, read timeout = 2m0s","time":"2022-11-18T00:09:08+08:00"}
+{"level":"info","msg":"session binance user data stream connected","time":"2022-11-18T00:09:08+08:00"}
+{"level":"warning","msg":"interrupt","time":"2022-11-18T00:09:23+08:00"}
+{"level":"info","msg":"shutting down...","time":"2022-11-18T00:09:23+08:00"}
+{"level":"info","msg":"saving strategies states...","time":"2022-11-18T00:09:23+08:00"}
+{"level":"info","msg":"session binance user data stream disconnected","time":"2022-11-18T00:09:23+08:00"}

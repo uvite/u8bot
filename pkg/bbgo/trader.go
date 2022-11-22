@@ -3,6 +3,7 @@ package bbgo
 import (
 	"context"
 	"fmt"
+	"github.com/c9s/bbgo/jsvm"
 	"reflect"
 	"sync"
 
@@ -84,6 +85,7 @@ type Trader struct {
 	environment *Environment
 
 	riskControls *RiskControls
+	jsvm         *jsvm.JsVm
 
 	crossExchangeStrategies []CrossExchangeStrategy
 	exchangeStrategies      map[string][]SingleExchangeStrategy
@@ -127,6 +129,15 @@ func (trader *Trader) Configure(userConfig *Config) error {
 		log.Infof("attaching cross exchange strategy %T", strategy)
 		trader.AttachCrossExchangeStrategy(strategy)
 	}
+
+	//fmt.Println(userConfig.Code)
+	js, err := jsvm.NewJsVm(userConfig.Code)
+	if err != nil {
+		//fmt.Println("fuck jsvm")
+		return err
+	}
+	//fmt.Println("fuck jsvm")
+	trader.jsvm = js
 
 	return nil
 }
@@ -176,6 +187,8 @@ func (trader *Trader) RunSingleExchangeStrategy(ctx context.Context, strategy Si
 	if shutdown, ok := strategy.(StrategyShutdown); ok {
 		trader.gracefulShutdown.OnShutdown(shutdown.Shutdown)
 	}
+
+	trader.jsvm.Set("strategy", strategy)
 
 	return strategy.Run(ctx, orderExecutor, session)
 }
@@ -288,7 +301,15 @@ func (trader *Trader) injectFieldsAndSubscribe(ctx context.Context) error {
 				); err != nil {
 					return errors.Wrapf(err, "failed to inject object into %T", strategy)
 				}
+				//trader.jsVm.Default(strategy)
+				//vm.JsVm(trader.jsVm)
 			}
+			//if vm, ok := strategy.(ExchangeVm); ok {
+			//
+			//	vm.JsVm(trader.jsVm)
+			//} else {
+			//	log.Errorf("strategy %s does not implement ExchangeSessionSubscriber", strategy.ID())
+			//}
 		}
 	}
 
@@ -458,6 +479,7 @@ func (trader *Trader) injectCommonServices(s interface{}) error {
 		trader.environment.DatabaseService,
 		trader.environment.AccountService,
 		trader.environment,
+		trader.jsvm,
 		persistenceServiceFacade, // if the strategy use persistence facade separately
 	)
 }
