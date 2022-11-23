@@ -79,7 +79,7 @@ func (s *Strategy) klineHandlerMin(ctx context.Context, kline types.KLine, count
 	if s.NoTrailingStopLoss {
 		return
 	}
-
+	fmt.Println("check stop ")
 	exitCondition := s.CheckStopLoss() || s.trailingCheck(highf, "short") || s.trailingCheck(lowf, "long")
 	if exitCondition {
 		_ = s.ClosePosition(ctx, fixedpoint.One)

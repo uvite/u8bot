@@ -149,11 +149,13 @@ func (p *Position) NewMarketCloseOrder(percentage fixedpoint.Value) *SubmitOrder
 	}
 
 	if quantity.Compare(p.Market.MinQuantity) < 0 {
+
 		return nil
 	}
 
 	side := SideTypeSell
 	sign := base.Sign()
+
 	if sign == 0 {
 		return nil
 	} else if sign < 0 {

@@ -40,6 +40,11 @@ const (
 	SideLong  = Side("Long")
 )
 
+type LimtStop struct {
+	limit fixedpoint.Value
+	stop  fixedpoint.Value
+}
+
 func init() {
 	bbgo.RegisterStrategy(ID, &Strategy{})
 }
@@ -102,6 +107,7 @@ type Strategy struct {
 	//drift                  *DriftMA
 
 	midPrice     fixedpoint.Value // the midPrice is the average of bestBid and bestAsk in public orderbook
+	Price        fixedpoint.Value // the midPrice is the average of bestBid and bestAsk in public orderbook
 	lock         sync.RWMutex     `ignore:"true"` // lock for midPrice
 	positionLock sync.RWMutex     `ignore:"true"` // lock for highest/lowest and p
 	pendingLock  sync.Mutex       `ignore:"true"`
@@ -148,7 +154,9 @@ type Strategy struct {
 	Session     *bbgo.ExchangeSession
 	*bbgo.GeneralOrderExecutor
 
-	getLastPrice func() fixedpoint.Value
+	getLastPrice   func() fixedpoint.Value
+	longLimitStop  *LimtStop
+	shortLimitStop *LimtStop
 }
 
 func (s *Strategy) ID() string {
@@ -160,7 +168,7 @@ func (s *Strategy) InstanceID() string {
 }
 
 func (s *Strategy) Subscribe(session *bbgo.ExchangeSession) {
-	fmt.Println(s.MinInterval, "====", s.Interval)
+	//fmt.Println(s.MinInterval, "====", s.Interval)
 	session.Subscribe(types.KLineChannel, s.Symbol, types.SubscribeOptions{
 		Interval: s.MinInterval,
 	})
@@ -234,12 +242,7 @@ func (s *Strategy) RunJsVm() {
 	s.JsVm.Set("low", s.low)
 	s.JsVm.Set("high", s.high)
 	s.JsVm.Set("symbol", s.Symbol)
-	s.JsVm.Set("po", s.Symbol)
-	//var jsOptionsObj *goja.Object
-
-	//jsOptionsObj = s.JsVm.Runtime.NewObject()
-	//jsOptionsObj.Set("postion",s.Position)
-	//s.JsVm.Set("strategy", jsOptionsObj)
+	s.JsVm.Set("price", &s.Price)
 	s.JsVm.Set("postion", s.Position)
 
 	if ok := s.JsVm.Vu.RunOnce(); ok != nil {
@@ -384,18 +387,25 @@ func (s *Strategy) Run(ctx context.Context, orderExecutor bbgo.OrderExecutor, se
 		if kline.Interval == s.Interval {
 			//fmt.Println(kline)
 			s.AddKline(kline)
-
+			//if ok := s.JsVm.Vu.RunOnce(); ok != nil {
+			//
+			//	fmt.Errorf("jsvm run err : %w", ok)
+			//
+			//}
 		}
 		if kline.Interval == s.MinInterval {
 			s.klineHandlerMin(ctx, kline, s.counter)
 		}
 	})
-
-	//store.OnKLine(func(kline types.KLine) {
-	//
-	//	s.AddKline(kline)
-	//
-	//})
+	s.longLimitStop = &LimtStop{
+		limit: 0.0,
+		stop:  0.0,
+	}
+	s.shortLimitStop = &LimtStop{
+		limit: 0.0,
+		stop:  0.0,
+	}
+	s.CheckLimitStop()
 
 	bbgo.OnShutdown(ctx, func(ctx context.Context, wg *sync.WaitGroup) {
 

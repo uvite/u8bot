@@ -172,7 +172,8 @@ func (b *ActiveOrderBook) GracefulCancel(ctx context.Context, ex types.Exchange,
 
 		// since ctx might be canceled, we should use background context here
 		if err := ex.CancelOrders(context.Background(), orders...); err != nil {
-			log.WithError(err).Errorf("[ActiveOrderBook] can not cancel %s orders", b.Symbol)
+
+			log.WithError(err).Errorf("[ActiveOrderBook] can not cancel %s orders %s", b.Symbol, orders)
 		}
 
 		log.Debugf("[ActiveOrderBook] waiting %s for %s orders to be cancelled...", waitTime, b.Symbol)

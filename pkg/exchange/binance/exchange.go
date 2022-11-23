@@ -271,6 +271,7 @@ func (e *Exchange) QueryMarkets(ctx context.Context) (types.MarketMap, error) {
 
 		markets := types.MarketMap{}
 		for _, symbol := range exchangeInfo.Symbols {
+
 			markets[symbol.Symbol] = toGlobalFuturesMarket(symbol)
 		}
 
@@ -1116,7 +1117,7 @@ func (e *Exchange) submitFuturesOrder(ctx context.Context, order types.SubmitOrd
 		return nil, err
 	}
 
-	log.Infof("futures order creation response: %+v", response)
+	//log.Infof("futures order creation response: %+v", response)
 
 	createdOrder, err := toGlobalFuturesOrder(&futures.Order{
 		Symbol:           response.Symbol,
