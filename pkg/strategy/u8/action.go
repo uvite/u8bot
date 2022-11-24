@@ -28,15 +28,18 @@ type Options struct {
 func (s *Strategy) CheckLimitStop() {
 	s.Session.MarketDataStream.OnKLine(func(kline types.KLine) {
 		s.Price = kline.Close
-		fmt.Println(s.Price.Float64(), s.sellPrice, s.shortLimitStop.limit.Float64(), s.sellPrice-s.shortLimitStop.limit.Float64())
+		//fmt.Println(s.Price.Float64(), s.sellPrice, s.shortLimitStop.limit.Float64(), s.sellPrice-s.shortLimitStop.limit.Float64())
+		//fmt.Println("多空:", s.Position.IsLong(), s.Position.IsShort())
 		if s.Position.IsLong() && s.longLimitStop.limit > 0 {
 			if s.Price.Float64() > s.buyPrice+s.longLimitStop.limit.Float64() {
+				fmt.Println("止赢平多")
 				s.Exit("long")
 			}
 		}
 		if s.Position.IsShort() && s.shortLimitStop.limit > 0 {
-			fmt.Println("止赢平空")
+
 			if s.Price.Float64() < s.sellPrice-s.shortLimitStop.limit.Float64() {
+				fmt.Println("止赢平空")
 				s.Exit("short")
 			}
 		}
