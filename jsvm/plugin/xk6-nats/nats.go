@@ -3,6 +3,8 @@ package nats
 import (
 	"crypto/tls"
 	"fmt"
+	"time"
+
 	"github.com/dop251/goja"
 	natsio "github.com/nats-io/nats.go"
 	"github.com/uvite/u8/js/common"
@@ -19,7 +21,7 @@ type RootModule struct{}
 
 // ModuleInstance represents an instance of the module for every VU.
 type Nats struct {
-	conn    *natsio.EncodedConn
+	conn    *natsio.Conn
 	vu      modules.VU
 	exports map[string]interface{}
 }
@@ -72,15 +74,13 @@ func (n *Nats) client(c goja.ConstructorCall) *goja.Object {
 	}
 
 	conn, err := natsOptions.Connect()
-	dc, _ := natsio.NewEncodedConn(conn, natsio.JSON_ENCODER)
-
 	if err != nil {
 		common.Throw(rt, err)
 	}
 
 	return rt.ToValue(&Nats{
 		vu:   n.vu,
-		conn: dc,
+		conn: conn,
 	}).ToObject(rt)
 }
 
@@ -90,12 +90,12 @@ func (n *Nats) Close() {
 	}
 }
 
-func (n *Nats) Publish(topic string, message any) error {
+func (n *Nats) Publish(topic, message string) error {
 	if n.conn == nil {
 		return fmt.Errorf("the connection is not valid")
 	}
 
-	return n.conn.Publish(topic, message)
+	return n.conn.Publish(topic, []byte(message))
 }
 
 func (n *Nats) Subscribe(topic string, handler MessageHandler) error {
@@ -114,21 +114,21 @@ func (n *Nats) Subscribe(topic string, handler MessageHandler) error {
 	return err
 }
 
-//func (n *Nats) Request(subject, data string) (Message, error) {
-//	if n.conn == nil {
-//		return Message{}, fmt.Errorf("the connection is not valid")
-//	}
-//
-//	msg, err := n.conn.Request(subject, []byte(data), 5*time.Second)
-//	if err != nil {
-//		return Message{}, err
-//	}
-//
-//	return Message{
-//		Data:  string(msg.Data),
-//		Topic: msg.Subject,
-//	}, nil
-//}
+func (n *Nats) Request(subject, data string) (Message, error) {
+	if n.conn == nil {
+		return Message{}, fmt.Errorf("the connection is not valid")
+	}
+
+	msg, err := n.conn.Request(subject, []byte(data), 5*time.Second)
+	if err != nil {
+		return Message{}, err
+	}
+
+	return Message{
+		Data:  string(msg.Data),
+		Topic: msg.Subject,
+	}, nil
+}
 
 type Configuration struct {
 	Servers []string

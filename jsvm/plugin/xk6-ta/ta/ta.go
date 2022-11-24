@@ -51,9 +51,12 @@ func (*RootModule) NewModuleInstance(vu modules.VU) modules.Instance {
 func (c *Ta) Exports() modules.Exports {
 	return modules.Exports{
 		Named: map[string]interface{}{
-			"change": c.Change,
-			"series": NewSeries,
-			"slice":  floats.NewSlice,
+			"change":     c.Change,
+			"series":     NewSeries,
+			"slice":      floats.NewSlice,
+			"crossover":  c.CrossOver,
+			"crossunder": c.CrossUnder,
+
 			//"alma": c.Alma,
 			"hma":  c.Hma,
 			"jma":  c.Jma,
@@ -87,6 +90,15 @@ func (c *Ta) Exports() modules.Exports {
 
 func noop() error { return nil }
 
+func (ta Ta) CrossOver(s floats.Slice, t floats.Slice) bool {
+
+	return s.Index(0)-t.Index(0) > 0 && s.Index(1)-t.Index(1) < 0
+
+}
+func (ta Ta) CrossUnder(s floats.Slice, t floats.Slice) bool {
+	return s.Index(0)-t.Index(0) < 0 && s.Index(1)-t.Index(1) > 0
+
+}
 func (ta Ta) Change(args ...any) any {
 	var res Series
 	var len int = 1

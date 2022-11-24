@@ -487,12 +487,21 @@ func generateTextInputModalRequest(title string, prompt string, textFields ...Te
 	}
 
 	for _, textField := range textFields {
-		labelObject := slack.NewTextBlockObject("plain_text", textField.Label, false, false)
-		placeHolderObject := slack.NewTextBlockObject("plain_text", textField.PlaceHolder, false, false)
-		textInputObject := slack.NewPlainTextInputBlockElement(placeHolderObject, textField.Name)
 
-		// Notice that blockID is a unique identifier for a block
-		inputBlock := slack.NewInputBlock("block-"+textField.Name+"-"+uuid.NewString(), labelObject, textInputObject)
+		summaryText := slack.NewTextBlockObject(slack.PlainTextType, textField.Label, false, false)
+		summaryHint := slack.NewTextBlockObject(slack.PlainTextType, textField.Name, false, false)
+		summaryPlaceholder := slack.NewTextBlockObject(slack.PlainTextType, textField.PlaceHolder, false, false)
+		summaryElement := slack.NewPlainTextInputBlockElement(summaryPlaceholder, "summary")
+
+		inputBlock := slack.NewInputBlock("block-"+textField.Name+"-"+uuid.NewString(), summaryText, summaryHint, summaryElement)
+
+		//labelObject := slack.NewTextBlockObject("plain_text", textField.Label, false, false)
+		//placeHolderObject := slack.NewTextBlockObject("plain_text", textField.PlaceHolder, false, false)
+		//textInputObject := slack.NewPlainTextInputBlockElement(placeHolderObject, textField.Name)
+		//
+		//// Notice that blockID is a unique identifier for a block
+		//inputBlock := slack.NewInputBlock("block-"+textField.Name+"-"+uuid.NewString(), labelObject, textInputObject)
+
 		blocks.BlockSet = append(blocks.BlockSet, inputBlock)
 	}
 

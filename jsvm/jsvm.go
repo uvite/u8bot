@@ -10,8 +10,8 @@ import (
 	"github.com/uvite/u8/lib"
 	"github.com/uvite/u8/metrics"
 
-	_ "github.com/uvite/u8/plugin/xk6-nats"
-	_ "github.com/uvite/u8/plugin/xk6-ta"
+	_ "github.com/c9s/bbgo/jsvm/plugin/xk6-nats"
+	_ "github.com/c9s/bbgo/jsvm/plugin/xk6-ta"
 )
 
 type JsVm struct {
