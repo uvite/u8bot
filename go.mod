@@ -221,4 +221,4 @@ require (
 	modernc.org/token v1.0.1 // indirect
 )
 
-replace github.com/uvite/u8 => ../u8
+///replace github.com/uvite/u8 => ../u8
